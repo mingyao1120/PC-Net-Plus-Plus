@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+outputs/
+*.log
+*.pt
+*.pth
+*.ckpt
+models.zip
+data/features/*
+data/qvhighlights/clip_slowfast.hdf5
+data/qvhighlights/cache/

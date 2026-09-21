@@ -1,0 +1,101 @@
+{
+  "dataset": {
+    "dataset": "QVHighlights",
+    "feature_path": "data/qvhighlights/clip_slowfast.hdf5",
+    "vocab_size": 6339,
+    "word_dim": 300,
+    "frame_dim": 2816,
+    "max_num_words": 30,
+    "max_num_frames": 75,
+    "target_stride": 1,
+    "train_data": "data/qvhighlights/qvhl_train.json",
+    "test_data": "data/qvhighlights/qvhl_val.json",
+    "val_data": "data/qvhighlights/qvhl_val.json",
+    "allow_val_equals_test": true,
+    "vocab_path": "data/qvhighlights/glove.pkl",
+    "qid2saliency": "data/qvhighlights/qid2saliency.pkl",
+    "sampled_feature_cache": "data/qvhighlights/cache/qv_val_75.npy",
+    "sampled_feature_index": "data/qvhighlights/cache/qv_val_75.index.json"
+  },
+  "protocol": {
+    "mode": "unified_paper",
+    "selection_split": "val",
+    "selection_metric": "MR-full-R1@0.5",
+    "deterministic_eval_mask": true
+  },
+  "train": {
+    "optimizer": {
+      "lr": 0.0004,
+      "weight_decay": 0,
+      "warmup_updates": 400,
+      "warmup_init_lr": 1e-07
+    },
+    "batch_size": 32,
+    "max_num_epochs": 30,
+    "model_saved_path": "outputs/qvhighlights",
+    "num_workers": 2,
+    "val_num_workers": 1,
+    "early_stop_patience": 5,
+    "early_stop_min_epoch": 10,
+    "evaluate_before_train": true
+  },
+  "model": {
+    "name": "PCNet",
+    "config": {
+      "frames_input_size": 2816,
+      "words_input_size": 300,
+      "hidden_size": 256,
+      "use_negative": true,
+      "num_props": 8,
+      "sigma": 9.0,
+      "sigma_neg": 4.5,
+      "gamma": 0.5,
+      "dropout": 0.1,
+      "num_iteration": 4,
+      "proposal_match_mode": "per_sample",
+      "proposal_feature_downsample": 1,
+      "proposal_use_all_frames": true,
+      "deterministic_eval_mask": true,
+      "proposal_generator_mode": "slot_hungarian",
+      "proposal_width_power": 1.0,
+      "proposal_fusion_mode": "center_width_learnable",
+      "proposal_fusion_alpha": 0.5,
+      "gaussian_mode": "fixed",
+      "proposal_kernel": "gaussian",
+      "peak_beta_init": 0.2,
+      "peak_beta_parameterization": "direct",
+      "DualTransformer": {
+        "d_model": 256,
+        "num_heads": 4,
+        "num_decoder_layers1": 3,
+        "num_decoder_layers2": 3,
+        "dropout": 0.1
+      },
+      "negative_curriculum_epochs": 30
+    }
+  },
+  "loss": {
+    "margin_1": 0.1,
+    "margin_2": 0.15,
+    "lambda": 0.15,
+    "alpha_1": 1,
+    "alpha_2": 0.1,
+    "inter_lambda": 0.13,
+    "co_cl_loss": 1.0,
+    "co_qua_loss": 1.0
+  },
+  "evaluation": {
+    "evaluator": "qvhighlights_official",
+    "qv_gt_jsonl": "data/qvhighlights/qvhl_val_gt.jsonl",
+    "score_source": "reconstruction",
+    "dump_predictions": false
+  },
+  "cpr": {
+    "family": "cf_marginal_set",
+    "deletion_power": 1.0,
+    "fuse_alpha": 0.0,
+    "saliency_mode": "causal_gain",
+    "saliency_temperature": 0.25
+  },
+  "seed": 8
+}
